@@ -1,4 +1,4 @@
-name: Admin - Batch Pull Request
+name: Admin - Trigger QA Automated
 on:
   workflow_dispatch:
     inputs:
