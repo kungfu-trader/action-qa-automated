@@ -34,22 +34,22 @@ export const dispatch = async function (argv: Argv) {
   );
   for (const { Key } of items) {
     await octokit
-        .request(
-            "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
-            {
-                owner: argv.owner,
-                repo: argv.repo,
-                workflow_id: argv.workflow_id,
-                ref: argv.ref,
-                inputs: {
-                    app_zip_pack_url: s3BaseUrl + Key,
-                },
-                headers: {
-                    "X-GitHub-Api-Version": "2022-11-28",
-                },
-            }
-        )
-        .catch((e) => console.error(e));
+      .request(
+        "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
+        {
+          owner: argv.owner,
+          repo: argv.repo,
+          workflow_id: argv.workflow_id,
+          ref: argv.ref,
+          inputs: {
+            app_zip_pack_url: s3BaseUrl + Key,
+          },
+          headers: {
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        }
+      )
+      .catch((e) => console.error(e));
   }
 };
 
