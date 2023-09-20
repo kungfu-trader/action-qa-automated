@@ -1,0 +1,28 @@
+name: "Trigger Qa Automated"
+author: "xcvdsfd"
+description: "Trigger automated test actions through http requests"
+inputs:
+  token:
+    description: "Github token. E.g. secrets.GITHUB_TOKEN"
+    require: true
+  bucket-prebuilt:
+    description: "S3 Bucket used as release area of prebuilt binaries"
+    default: "kungfu-prebuilt"
+  qa_automated_ref:
+    description: "The git reference for the workflow. The reference can be a branch or tag name."
+    default: "main"
+  qa_automated_repo:
+    description: "qa-automated repo"
+    default: "kfx-qa-automated"
+  workflow_id:
+    description: "qa workflow_id"
+    default: "manually.yaml"
+  artifact_name:
+    description: "Manual trigger artifact_name"
+    require: false
+  artifact_version:
+    description: "Manual trigger artifact_version"
+    require: false
+runs:
+  using: "node18"
+  main: "dist/index.js"

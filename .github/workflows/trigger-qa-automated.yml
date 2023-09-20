@@ -1,0 +1,42 @@
+name: Admin - Batch Pull Request
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_name:
+        description: 'artifact_name'
+        required: true
+        default: 'artifact-kungfu'
+        type: string
+      artifact_version:
+        description: 'artifact_version'
+        required: true
+        type: string
+      qa_automated_repo:
+        description: 'qa_automated_repo'
+        required: true
+        default: 'kfx-qa-automated'
+        type: string
+      qa_automated_ref:
+        description: 'qa_automated_ref'
+        required: true
+        default: 'main'
+        type: string
+      workflow_id:
+        description: 'qa_automated_workflow_id'
+        required: true
+        default: 'manually.yaml'
+        type: string
+
+jobs:
+  pullrequest:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Batch pr
+        uses: kungfu-trader/action-qa-automated@v1.0-alpha
+        with:
+          token: ${{ secrets.KUNGFU_GITHUB_TOKEN }}
+          artifact_name: ${{ inputs.artifact_name }}
+          artifact_version: ${{ inputs.artifact_version }}
+          qa_automated_repo: ${{ inputs.qa_automated_repo }}
+          qa_automated_ref: ${{ inputs.qa_automated_ref }}
+          workflow_id: ${{ inputs.workflow_id }}
