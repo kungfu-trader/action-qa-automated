@@ -5,7 +5,7 @@ import { context } from "@actions/github";
 const main = async function () {
   const argv: Argv = {
     token: getInput("token"),
-    bucketPrebuilt: getInput("bucket-release"),
+    bucketPrebuilt: getInput("bucket-prebuilt"),
     workflow_id: getInput("workflow_id"),
     ref: getInput("qa_automated_ref"),
     repo: getInput("qa_automated_repo"),

@@ -25464,7 +25464,7 @@ const github_1 = __nccwpck_require__(5438);
 const main = async function () {
     const argv = {
         token: (0, core_1.getInput)("token"),
-        bucketPrebuilt: (0, core_1.getInput)("bucket-release"),
+        bucketPrebuilt: (0, core_1.getInput)("bucket-prebuilt"),
         workflow_id: (0, core_1.getInput)("workflow_id"),
         ref: (0, core_1.getInput)("qa_automated_ref"),
         repo: (0, core_1.getInput)("qa_automated_repo"),
