@@ -1,4 +1,4 @@
-name: Admin - Batch Pull Request
+name: Admin - Trigger QA Automated
 on:
   workflow_dispatch:
     inputs:
@@ -27,11 +27,22 @@ on:
         required: true
         default: 'manually.yaml'
         type: string
+      aws-user-region:
+        default: "cn-northwest-1"
+        type: string
+        required: false
 
 jobs:
   automated:
     runs-on: ubuntu-20.04
     steps:
+      - name: Configure AWS Crendentials (User)
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_USER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_USER_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws-user-region }}
+
       - name: trigger
         uses: kungfu-trader/action-qa-automated@v1.0-alpha
         with:
