@@ -10,6 +10,7 @@ on:
       artifact_version:
         description: 'artifact_version'
         required: true
+        default: '2.7.0'
         type: string
       qa_automated_repo:
         description: 'qa_automated_repo'
@@ -28,10 +29,10 @@ on:
         type: string
 
 jobs:
-  pullrequest:
+  automated:
     runs-on: ubuntu-20.04
     steps:
-      - name: Batch pr
+      - name: trigger
         uses: kungfu-trader/action-qa-automated@v1.0-alpha
         with:
           token: ${{ secrets.KUNGFU_GITHUB_TOKEN }}

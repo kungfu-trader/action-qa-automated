@@ -33,24 +33,23 @@ export const dispatch = async function (argv: Argv) {
     ({ Key }) => Key.endsWith(".zip") && Key.includes("win-x64")
   );
   for (const { Key } of items) {
-    console.log(s3BaseUrl + Key);
-    // await octokit
-    //     .request(
-    //         "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
-    //         {
-    //             owner: argv.owner,
-    //             repo: argv.repo,
-    //             workflow_id: argv.workflow_id,
-    //             ref: argv.ref,
-    //             inputs: {
-    //                 app_zip_pack_url: s3BaseUrl + Key,
-    //             },
-    //             headers: {
-    //                 "X-GitHub-Api-Version": "2022-11-28",
-    //             },
-    //         }
-    //     )
-    //     .catch((e) => console.error(e));
+    await octokit
+        .request(
+            "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
+            {
+                owner: argv.owner,
+                repo: argv.repo,
+                workflow_id: argv.workflow_id,
+                ref: argv.ref,
+                inputs: {
+                    app_zip_pack_url: s3BaseUrl + Key,
+                },
+                headers: {
+                    "X-GitHub-Api-Version": "2022-11-28",
+                },
+            }
+        )
+        .catch((e) => console.error(e));
   }
 };
 
