@@ -12,6 +12,7 @@ const main = async function () {
     artifactName: getInput("artifact_name"),
     artifactVersion: getInput("artifact_version"),
     owner: context.payload.repository?.owner.login!,
+    pullRequestTitle: context.payload?.pull_request?.title,
   };
   await dispatch(argv);
 };
