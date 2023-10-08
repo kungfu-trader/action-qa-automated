@@ -14,6 +14,7 @@ export interface Argv {
   ref: string;
   artifactName?: string;
   artifactVersion?: string;
+  pullRequestTitle?: string;
 }
 
 const spawnOpts = {
@@ -33,6 +34,7 @@ export const dispatch = async function (argv: Argv) {
     ({ Key }) => Key.endsWith(".zip") && Key.includes("win-x64")
   );
   for (const { Key } of items) {
+    console.log(s3BaseUrl + Key);
     await octokit
       .request(
         "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
@@ -72,8 +74,9 @@ const getFileList = (argv: Argv) => {
     ? [argv.artifactName]
     : getArtifactMap();
   const version = formatVersion(
-    argv.artifactVersion ? argv.artifactVersion : currentVersion()
+    argv.artifactVersion ? argv.artifactVersion : currentVersion(argv)
   );
+  console.log(artifactMap, version);
   return artifactMap
     .map((v) =>
       scanFolder({
@@ -144,12 +147,8 @@ const getArtifactName = (cwd = process.cwd(), link = "package.json") => {
   )?.name?.split("/")?.[1];
 };
 
-const currentVersion = (): string => {
-  const configPath = fs.existsSync("lerna.json")
-    ? "lerna.json"
-    : "package.json";
-  const config = JSON.parse(fs.readFileSync(configPath).toString("utf-8"));
-  return config.version;
+const currentVersion = (argv: Argv): string => {
+  return argv.pullRequestTitle?.split(" v")?.[1] ?? "";
 };
 
 const formatVersion = (str: string) => {

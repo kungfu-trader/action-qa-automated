@@ -17470,6 +17470,7 @@ const dispatch = async function (argv) {
     const files = getFileList(argv);
     const items = files.filter(({ Key }) => Key.endsWith(".zip") && Key.includes("win-x64"));
     for (const { Key } of items) {
+        console.log(s3BaseUrl + Key);
         await octokit
             .request("POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches", {
             owner: argv.owner,
@@ -17504,7 +17505,8 @@ const getFileList = (argv) => {
     const artifactMap = argv.artifactName
         ? [argv.artifactName]
         : getArtifactMap();
-    const version = formatVersion(argv.artifactVersion ? argv.artifactVersion : currentVersion());
+    const version = formatVersion(argv.artifactVersion ? argv.artifactVersion : currentVersion(argv));
+    console.log(artifactMap, version);
     return artifactMap
         .map((v) => scanFolder({
         bucketPrebuilt: argv.bucketPrebuilt,
@@ -17549,12 +17551,8 @@ const getArtifactMap = () => {
 const getArtifactName = (cwd = process.cwd(), link = "package.json") => {
     return JSON.parse(fs_1.default.readFileSync(path_1.default.join(cwd || process.cwd(), link)).toString("utf-8"))?.name?.split("/")?.[1];
 };
-const currentVersion = () => {
-    const configPath = fs_1.default.existsSync("lerna.json")
-        ? "lerna.json"
-        : "package.json";
-    const config = JSON.parse(fs_1.default.readFileSync(configPath).toString("utf-8"));
-    return config.version;
+const currentVersion = (argv) => {
+    return argv.pullRequestTitle?.split(" v")?.[1] ?? "";
 };
 const formatVersion = (str) => {
     const { major, version } = semver_1.default.parse(str);
@@ -25471,6 +25469,7 @@ const main = async function () {
         artifactName: (0, core_1.getInput)("artifact_name"),
         artifactVersion: (0, core_1.getInput)("artifact_version"),
         owner: github_1.context.payload.repository?.owner.login,
+        pullRequestTitle: github_1.context.payload?.pull_request?.title,
     };
     await (0, lib_1.dispatch)(argv);
 };
