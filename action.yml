@@ -10,13 +10,13 @@ inputs:
     default: "kungfu-prebuilt"
   qa_automated_ref:
     description: "The git reference for the workflow. The reference can be a branch or tag name."
-    default: "main"
+    default: 'test_merge_github_action'
   qa_automated_repo:
     description: "qa-automated repo"
     default: "kfx-qa-automated"
   workflow_id:
     description: "qa workflow_id"
-    default: "manually.yaml"
+    default: 'self_hosted_screen_recording.yml'
   artifact_name:
     description: "Manual trigger artifact_name"
     require: false
