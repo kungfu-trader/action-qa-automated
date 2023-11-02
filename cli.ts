@@ -8,24 +8,18 @@ const cmdArgv = yargs(process.argv.slice(2))
     type: "string",
     default: "kungfu-prebuilt",
   })
-  .option("workflow_id", {
-    description: "workflow_id",
-    type: "string",
-    default: "manually.yaml",
-  })
-  .option("ref", { description: "ref", type: "string", default: "main" })
   .option("owner", { description: "owner", type: "string" })
   .option("repo", { description: "repo", type: "string" })
+  .option("qaRepo", { description: "qaRepo", type: "string" })
   .help()
   .parseSync();
 
 const argv: Argv = {
   token: cmdArgv.token,
   bucketPrebuilt: cmdArgv.bucketPrebuilt,
-  workflow_id: cmdArgv.workflow_id,
-  ref: cmdArgv.ref,
   owner: cmdArgv.owner,
   repo: cmdArgv.repo,
+  qaRepo: cmdArgv.qaRepo,
 };
 
 dispatch(argv).catch(console.error);

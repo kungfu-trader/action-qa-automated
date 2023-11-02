@@ -17440,6 +17440,31 @@ try {
 
 /***/ }),
 
+/***/ 8366:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SPAWN_OPTS = exports.QA_INFO_CONTRAST = void 0;
+exports.QA_INFO_CONTRAST = [
+    {
+        version: "2.6",
+        workflow_id: "main.yaml",
+        ref: "prod/v2/2.6",
+        repo: "kungfu",
+    },
+];
+exports.SPAWN_OPTS = {
+    shell: true,
+    stdio: "pipe",
+    encoding: "utf-8",
+    windowsHide: true,
+};
+
+
+/***/ }),
+
 /***/ 4784:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -17456,12 +17481,7 @@ const child_process_1 = __nccwpck_require__(2081);
 const rest_1 = __nccwpck_require__(5375);
 const glob_1 = __nccwpck_require__(3277);
 const semver_1 = __importDefault(__nccwpck_require__(1383));
-const spawnOpts = {
-    shell: true,
-    stdio: "pipe",
-    encoding: "utf-8",
-    windowsHide: true,
-};
+const const_1 = __nccwpck_require__(8366);
 const dispatch = async function (argv) {
     const octokit = new rest_1.Octokit({
         auth: argv.token,
@@ -17470,21 +17490,32 @@ const dispatch = async function (argv) {
     const files = getFileList(argv);
     const items = files.filter(({ Key }) => Key.endsWith(".zip") && Key.includes("win-x64"));
     for (const { Key } of items) {
-        console.log(s3BaseUrl + Key);
-        await octokit
-            .request("POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches", {
+        const qaInfo = getQaInfo(argv);
+        console.log({
             owner: argv.owner,
-            repo: argv.repo,
-            workflow_id: argv.workflow_id,
-            ref: argv.ref,
+            repo: argv.qaRepo,
+            workflow_id: qaInfo?.workflow_id,
+            ref: qaInfo?.ref,
             inputs: {
                 app_zip_pack_url: s3BaseUrl + Key,
             },
-            headers: {
-                "X-GitHub-Api-Version": "2022-11-28",
-            },
-        })
-            .catch((e) => console.error(e));
+        });
+        if (qaInfo) {
+            await octokit
+                .request("POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches", {
+                owner: argv.owner,
+                repo: argv.qaRepo,
+                workflow_id: qaInfo.workflow_id,
+                ref: qaInfo.ref,
+                inputs: {
+                    app_zip_pack_url: s3BaseUrl + Key,
+                },
+                headers: {
+                    "X-GitHub-Api-Version": "2022-11-28",
+                },
+            })
+                .catch((e) => console.error(e));
+        }
     }
 };
 exports.dispatch = dispatch;
@@ -17502,11 +17533,10 @@ const getBaseUrl = async ({ bucketPrebuilt }) => {
     return s3Location.startsWith("cn") ? s3BaseUrlCN : s3BaseUrlGlobal;
 };
 const getFileList = (argv) => {
-    const artifactMap = argv.artifactName
-        ? [argv.artifactName]
+    const artifactMap = argv.manualArtifactName
+        ? [argv.manualArtifactName]
         : getArtifactMap();
-    const version = formatVersion(argv.artifactVersion ? argv.artifactVersion : currentVersion(argv));
-    console.log(artifactMap, version);
+    const version = formatVersion(argv.manualVersion ? argv.manualVersion : currentVersion(argv));
     return artifactMap
         .map((v) => scanFolder({
         bucketPrebuilt: argv.bucketPrebuilt,
@@ -17522,12 +17552,12 @@ const scanFolder = ({ bucketPrebuilt, artifact, version, }) => {
         `--bucket ${bucketPrebuilt}`,
         `--prefix ${artifact}/${version}/`,
         "--output json",
-    ], spawnOpts)?.stdout.toString("utf-8");
+    ], const_1.SPAWN_OPTS)?.stdout.toString("utf-8");
     const items = JSON.parse(s3Objects)?.Contents;
     return Array.isArray(items) ? items : [];
 };
 function awsOutput(args) {
-    const result = awsCall(args, spawnOpts);
+    const result = awsCall(args, const_1.SPAWN_OPTS);
     return result.output
         .filter((e) => e && e.length > 0)
         .toString()
@@ -17557,6 +17587,13 @@ const currentVersion = (argv) => {
 const formatVersion = (str) => {
     const { major, version } = semver_1.default.parse(str);
     return `v${major}/v${version}`;
+};
+const getQaInfo = (argv) => {
+    const versionMap = argv.pullRequestTitle
+        ? argv.pullRequestTitle.split(" v")[1].split(".")
+        : (argv.manualVersion ?? "").split(".");
+    const version = `${versionMap[0]}.${versionMap[1]}`;
+    return const_1.QA_INFO_CONTRAST.find((v) => v.version === version && v.repo === argv.repo);
 };
 
 
@@ -25463,11 +25500,10 @@ const main = async function () {
     const argv = {
         token: (0, core_1.getInput)("token"),
         bucketPrebuilt: (0, core_1.getInput)("bucket-prebuilt"),
-        workflow_id: (0, core_1.getInput)("workflow_id"),
-        ref: (0, core_1.getInput)("qa_automated_ref"),
-        repo: (0, core_1.getInput)("qa_automated_repo"),
-        artifactName: (0, core_1.getInput)("artifact_name"),
-        artifactVersion: (0, core_1.getInput)("artifact_version"),
+        qaRepo: (0, core_1.getInput)("qa_automated_repo"),
+        manualArtifactName: (0, core_1.getInput)("manual_artifact_name"),
+        manualVersion: (0, core_1.getInput)("manual_version"),
+        repo: (0, core_1.getInput)("manual_repo") ?? github_1.context.payload.repository?.name,
         owner: github_1.context.payload.repository?.owner.login,
         pullRequestTitle: github_1.context.payload?.pull_request?.title,
     };

@@ -6,11 +6,10 @@ const main = async function () {
   const argv: Argv = {
     token: getInput("token"),
     bucketPrebuilt: getInput("bucket-prebuilt"),
-    workflow_id: getInput("workflow_id"),
-    ref: getInput("qa_automated_ref"),
-    repo: getInput("qa_automated_repo"),
-    artifactName: getInput("artifact_name"),
-    artifactVersion: getInput("artifact_version"),
+    qaRepo: getInput("qa_automated_repo"),
+    manualArtifactName: getInput("manual_artifact_name"),
+    manualVersion: getInput("manual_version"),
+    repo: getInput("manual_repo") ?? context.payload.repository?.name,
     owner: context.payload.repository?.owner.login!,
     pullRequestTitle: context.payload?.pull_request?.title,
   };
