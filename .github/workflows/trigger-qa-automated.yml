@@ -2,30 +2,25 @@ name: Trigger QA Automated
 on:
   workflow_dispatch:
     inputs:
+      repo:
+        description: 'repo'
+        required: true
+        default: 'kungfu'
+        type: string
+      version:
+        description: 'version'
+        required: true
+        default: '2.6.3-alpha.1'
+        type: string
       artifact_name:
         description: 'artifact_name'
         required: true
         default: 'artifact-kungfu'
         type: string
-      artifact_version:
-        description: 'artifact_version'
-        required: true
-        default: '2.7.0'
-        type: string
       qa_automated_repo:
         description: 'qa_automated_repo'
         required: true
         default: 'kfx-qa-automated'
-        type: string
-      qa_automated_ref:
-        description: 'qa_automated_ref'
-        required: true
-        default: 'test_merge_github_action'
-        type: string
-      workflow_id:
-        description: 'qa_automated_workflow_id'
-        required: true
-        default: 'self_hosted_screen_recording.yml'
         type: string
       aws-user-region:
         default: "cn-northwest-1"
@@ -47,8 +42,8 @@ jobs:
         uses: kungfu-trader/action-qa-automated@v1.0-alpha
         with:
           token: ${{ secrets.KUNGFU_GITHUB_TOKEN }}
-          artifact_name: ${{ inputs.artifact_name }}
-          artifact_version: ${{ inputs.artifact_version }}
+          manual_artifact_name: ${{ inputs.artifact_name }}
+          manual_version: ${{ inputs.version }}
+          manual_repo: ${{ inputs.repo }}
           qa_automated_repo: ${{ inputs.qa_automated_repo }}
-          qa_automated_ref: ${{ inputs.qa_automated_ref }}
-          workflow_id: ${{ inputs.workflow_id }}
+
