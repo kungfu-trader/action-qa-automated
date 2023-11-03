@@ -25503,10 +25503,19 @@ const main = async function () {
         qaRepo: (0, core_1.getInput)("qa_automated_repo"),
         manualArtifactName: (0, core_1.getInput)("manual_artifact_name"),
         manualVersion: (0, core_1.getInput)("manual_version"),
-        repo: (0, core_1.getInput)("manual_repo") ?? github_1.context.payload.repository?.name,
+        repo: (0, core_1.getInput)("manual_repo") || github_1.context.payload.repository?.name || "",
         owner: github_1.context.payload.repository?.owner.login,
         pullRequestTitle: github_1.context.payload?.pull_request?.title,
     };
+    console.log({
+        bucketPrebuilt: (0, core_1.getInput)("bucket-prebuilt"),
+        qaRepo: (0, core_1.getInput)("qa_automated_repo"),
+        manualArtifactName: (0, core_1.getInput)("manual_artifact_name"),
+        manualVersion: (0, core_1.getInput)("manual_version"),
+        repo: (0, core_1.getInput)("manual_repo") || github_1.context.payload.repository?.name || "",
+        owner: github_1.context.payload.repository?.owner.login,
+        pullRequestTitle: github_1.context.payload?.pull_request?.title,
+    });
     await (0, lib_1.dispatch)(argv);
 };
 if (require.main === require.cache[eval('__filename')]) {
