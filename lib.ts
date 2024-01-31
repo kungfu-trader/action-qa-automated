@@ -17,45 +17,45 @@ export interface Argv {
 }
 
 export const dispatch = async function (argv: Argv) {
-  // const octokit = new Octokit({
-  //   auth: argv.token,
-  // });
-  // const s3BaseUrl = await getBaseUrl(argv);
-  // const files = getFileList(argv);
-  // const items = files.filter(
-  //   ({ Key }) => Key.endsWith(".zip") && Key.includes("win-x64")
-  // );
-  // for (const { Key } of items) {
-  //   const qaInfo = getQaInfo(argv);
-  //   console.log({
-  //     owner: argv.owner,
-  //     repo: argv.qaRepo,
-  //     workflow_id: qaInfo?.workflow_id,
-  //     ref: qaInfo?.ref,
-  //     inputs: {
-  //       app_zip_pack_url: s3BaseUrl + Key,
-  //     },
-  //   });
-  //   if (qaInfo) {
-  //     await octokit
-  //       .request(
-  //         "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
-  //         {
-  //           owner: argv.owner,
-  //           repo: argv.qaRepo,
-  //           workflow_id: qaInfo.workflow_id,
-  //           ref: qaInfo.ref,
-  //           inputs: {
-  //             app_zip_pack_url: s3BaseUrl + Key,
-  //           },
-  //           headers: {
-  //             "X-GitHub-Api-Version": "2022-11-28",
-  //           },
-  //         }
-  //       )
-  //       .catch((e) => console.error(e));
-  //   }
-  // }
+  const octokit = new Octokit({
+    auth: argv.token,
+  });
+  const s3BaseUrl = await getBaseUrl(argv);
+  const files = getFileList(argv);
+  const items = files.filter(
+    ({ Key }) => Key.endsWith(".zip") && Key.includes("win-x64")
+  );
+  for (const { Key } of items) {
+    const qaInfo = getQaInfo(argv);
+    console.log({
+      owner: argv.owner,
+      repo: argv.qaRepo,
+      workflow_id: qaInfo?.workflow_id,
+      ref: qaInfo?.ref,
+      inputs: {
+        app_zip_pack_url: s3BaseUrl + Key,
+      },
+    });
+    if (qaInfo) {
+      await octokit
+        .request(
+          "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches",
+          {
+            owner: argv.owner,
+            repo: argv.qaRepo,
+            workflow_id: qaInfo.workflow_id,
+            ref: qaInfo.ref,
+            inputs: {
+              app_zip_pack_url: s3BaseUrl + Key,
+            },
+            headers: {
+              "X-GitHub-Api-Version": "2022-11-28",
+            },
+          }
+        )
+        .catch((e) => console.error(e));
+    }
+  }
 };
 
 const getBaseUrl = async ({ bucketPrebuilt }: Argv) => {
