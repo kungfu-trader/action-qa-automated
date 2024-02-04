@@ -17451,7 +17451,7 @@ exports.QA_INFO_CONTRAST = [
     {
         version: "2.6",
         workflow_id: "main.yaml",
-        ref: "prod/v2/2.6",
+        ref: "prod/v2/v2.6",
         repo: "kungfu",
     },
 ];
