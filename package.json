@@ -1,7 +1,7 @@
 {
   "name": "@kungfu-trader/action-qa-automated",
   "version": "1.0.0-alpha.12",
-  "repository": "https://github.com/kungfu-trader/action-qa-automated",
+  "repository": "https://github.com/kungfu-systems/action-qa-automated",
   "author": "Kungfu",
   "license": "Apache-2.0",
   "scripts": {

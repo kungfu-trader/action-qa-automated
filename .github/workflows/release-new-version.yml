@@ -15,10 +15,10 @@ permissions:
 
 jobs:
   release:
-    uses: kungfu-systems/workflows/.github/workflows/.release-new-version.yml@v2.0-alpha
+    uses: kungfu-systems/workflows/.github/workflows/.release-new-version.yml@v2
     with:
       publish-aws-ci: false
       publish-aws-user: false
-      action-bump-version-ref: v4.0-alpha
+      action-bump-version-ref: v4
     secrets:
       GITHUB_PUSH_TOKEN: ${{ secrets.KUNGFU_GITHUB_TOKEN }}
