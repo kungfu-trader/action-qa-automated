@@ -13,9 +13,9 @@ permissions:
 
 jobs:
   try:
-    uses: kungfu-systems/workflows/.github/workflows/.release-verify.yml@dev/v2/v2.0
+    uses: kungfu-systems/workflows/.github/workflows/.release-verify.yml@v2.0-alpha
     with:
-      action-bump-version-ref: dev/v4/v4.0
+      action-bump-version-ref: v4.0-alpha
       publish-aws-user: false
       publish-aws-ci: false
       publish-versioning: false
